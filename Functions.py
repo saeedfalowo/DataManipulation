@@ -4,6 +4,15 @@ def ConvertAng2Radiance(AngSig):
     return print(AngSig.head())
 
 def SegmentRuns(sig):
+    """
+    This function's purpose is to use the vehicle speed signal to segment the test into test runs
+    The test runs were performed by accelerating till about 10 m/s before releasing the pedals
+    and switching to neutral transmission to allow the vehicle to roll to a stop
+    This function extracts the portions of the test where the vehicle has reached its peak speed
+    and has started its free rolling.
+    This function records the start of the free rolling signal index and its signal index when it
+    rolls to a complete stop
+    """
     rec = 0
     zeroPoints = []
     indx = []
@@ -39,6 +48,10 @@ def SegmentRuns(sig):
     return zeroPoints
 
 def PlotDeclSpdOverlay(Time,sig,zeroPoints):
+    """
+    This function uses the signal segment point indices to ovelay each runs plot over each other to make comparison
+    between the total number of runs
+    """
     import matplotlib.pyplot as plt
     
     for i in range(0,len(zeroPoints),2):
@@ -58,6 +71,11 @@ def PlotDeclSpdOverlay(Time,sig,zeroPoints):
     return plt.show()
 
 def BuildRunsDict(df,zeroPoints,sos,Ts):
+    """
+    This function uses the signal segment point indices to segment focus signals into the number of test runs
+    performed and stores these segmented signals into a cascaded dictionary
+    Vehicle Acceleration is also calculated in this function
+    """
     
     from scipy.signal import butter, lfilter, freqz, sosfilt
     import numpy as np
@@ -124,8 +142,13 @@ def BuildRunsDict(df,zeroPoints,sos,Ts):
     return Runs_dict,Vehfilt
 
 def WorkOutFgi(mass,Runs_dict):
+    """
+    This function uses the Runs cascaded dictionary to calculate the vehicle losses at each time step of the signal
+    The vehicle loss signal is also added to the runs dictionary
+    """
     g = 9.81
     
+    # Find out the number of runs within the dictionary
     numRuns = len(Runs_dict['VehSpd'].keys())
     Runs_dict['FgiRaw']  = {}
     Runs_dict['FgiFilt'] = {}

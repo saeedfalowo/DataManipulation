@@ -1,4 +1,9 @@
 def ExtractData4rmCSV(csvfilepath):
+    
+    """
+    This function's purpose is to convert a csv file containing signal values into a single dataFrame
+    """
+    
     import csv
     import numpy as np
     import matplotlib.pyplot as plt
